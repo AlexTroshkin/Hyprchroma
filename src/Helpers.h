@@ -10,24 +10,24 @@
 
 namespace std
 {
-    inline void swap(CShader& a, CShader& b)
+    inline void swap(SShader& a, SShader& b)
     {
         // memcpy because speed!
         // (Would break unordered map, but those aren't in use anyway..)
-        uint8_t c[sizeof(CShader)];
-        std::memcpy(&c, &a, sizeof(CShader));
-        std::memcpy(&a, &b, sizeof(CShader));
-        std::memcpy(&b, &c, sizeof(CShader));
+        uint8_t c[sizeof(SShader)];
+        std::memcpy(&c, &a, sizeof(SShader));
+        std::memcpy(&a, &b, sizeof(SShader));
+        std::memcpy(&b, &c, sizeof(SShader));
     }
 }
 
 struct ShaderHolder
 {
-    CShader RGBA;
+    SShader RGBA;
     GLint RGBA_Invert;
-    CShader RGBX;
+    SShader RGBX;
     GLint RGBX_Invert;
-    CShader EXT;
+    SShader EXT;
     GLint EXT_Invert;
 
     // Holds the background color

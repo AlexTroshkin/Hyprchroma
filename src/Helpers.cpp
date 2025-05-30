@@ -4,14 +4,15 @@
 #include <unordered_set>
 
 #include <hyprland/src/Compositor.hpp>
+#include <hyprland/src/render/Renderer.hpp>
+#include <hyprland/src/render/OpenGL.hpp>
 #include <hyprutils/string/String.hpp>
-
 
 void ShaderHolder::Init()
 {
     g_pHyprRenderer->makeEGLCurrent();
 
-    GLuint prog               = CreateProgram(TEXVERTSRC, TEXFRAGSRCRGBA_DARK);
+    GLuint prog               = CreateProgram(g_pHyprOpenGL->m_shaders->TEXVERTSRC, TEXFRAGSRCRGBA_DARK);
     RGBA.program              = prog;
     RGBA.proj                 = glGetUniformLocation(prog, "proj");
     RGBA.tex                  = glGetUniformLocation(prog, "tex");
@@ -29,7 +30,7 @@ void ShaderHolder::Init()
     RGBA_Invert               = glGetUniformLocation(prog, "doInvert"); 
     BKGA = glGetUniformLocation(prog, "bkg");
 
-    prog                      = CreateProgram(TEXVERTSRC, TEXFRAGSRCRGBX_DARK);
+    prog                      = CreateProgram(g_pHyprOpenGL->m_shaders->TEXVERTSRC, TEXFRAGSRCRGBX_DARK);
     RGBX.program              = prog;
     RGBX.tex                  = glGetUniformLocation(prog, "tex");
     RGBX.proj                 = glGetUniformLocation(prog, "proj");
@@ -47,7 +48,7 @@ void ShaderHolder::Init()
     RGBX_Invert               = glGetUniformLocation(prog, "doInvert"); 
     BKGX = glGetUniformLocation(prog, "bkg");
 
-    prog                     = CreateProgram(TEXVERTSRC, TEXFRAGSRCEXT_DARK);
+    prog                     = CreateProgram(g_pHyprOpenGL->m_shaders->TEXVERTSRC, TEXFRAGSRCEXT_DARK);
     EXT.program              = prog;
     EXT.tex                  = glGetUniformLocation(prog, "tex");
     EXT.proj                 = glGetUniformLocation(prog, "proj");

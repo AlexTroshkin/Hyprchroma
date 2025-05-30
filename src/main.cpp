@@ -2,6 +2,7 @@
 
 #include <dlfcn.h>
 
+#include <hyprland/src/config/ConfigManager.hpp>
 #include <hyprland/src/SharedDefs.hpp>
 #include <hyprlang.hpp>
 
@@ -27,7 +28,7 @@ void* hkGetDataFor(void* thisptr, IHyprWindowDecoration* pDecoration, PHLWINDOW 
         pDecoration = wrapper->get();
     }
 
-    return ((decltype(&hkGetDataFor))g_getDataForHook->m_pOriginal)(thisptr, pDecoration, pWindow);
+    return ((decltype(&hkGetDataFor))g_getDataForHook->m_original)(thisptr, pDecoration, pWindow);
 }
 
 APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
@@ -37,7 +38,6 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
     {
         std::lock_guard<std::mutex> lock(g_InverterMutex);
         g_WindowInverter.Init(PHANDLE);
-        g_pConfigManager->m_bForceReload = true;
     }
 
     HyprlandAPI::addConfigValue(PHANDLE, "plugin:darkwindow:ignore_decorations", Hyprlang::CConfigValue(Hyprlang::INT{ 0 }));
@@ -130,7 +130,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
     });
     HyprlandAPI::addDispatcher(PHANDLE, "togglechromakey", [&](std::string args) {
         std::lock_guard<std::mutex> lock(g_InverterMutex);
-        g_WindowInverter.ToggleInvert(g_pCompositor->m_pLastWindow.lock());
+        g_WindowInverter.ToggleInvert(g_pCompositor->m_lastWindow.lock());
     });
 
     return {

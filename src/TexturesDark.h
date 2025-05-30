@@ -3,8 +3,26 @@
 #include <string>
 #include <format>
 
-#include <hyprland/src/render/shaders/Textures.hpp>
+#include <hyprland/src/render/Texture.hpp>
 
+inline static constexpr auto ROUNDED_SHADER_FUNC = [](const std::string colorVarName) -> std::string {
+    return R"#(
+
+    // branchless baby!
+    highp vec2 pixCoord = vec2(gl_FragCoord);
+    pixCoord -= topLeft + fullSize * 0.5;
+    pixCoord *= vec2(lessThan(pixCoord, vec2(0.0))) * -2.0 + 1.0;
+    pixCoord -= fullSize * 0.5 - radius;
+    pixCoord += vec2(1.0, 1.0) / fullSize; // center the pix dont make it top-left
+
+    if (pixCoord.x + pixCoord.y > radius) {
+      float squirclePolynomial = 4.0;
+      float squircle = pow(abs(pixCoord.x / radius), squirclePolynomial) + pow(abs(pixCoord.y / radius), squirclePolynomial) - 1.0;
+      float edgeTransition = 1.0 - smoothstep(-0.02, 0.02, squircle);
+      )#" + colorVarName + R"#( = )#" + colorVarName + R"#( * edgeTransition;
+    }
+    )#";
+};
 
 inline static const std::string DARK_MODE_FUNC = R"glsl(
 uniform bool doInvert;
